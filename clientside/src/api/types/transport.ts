@@ -1,3 +1,5 @@
+import { InfallibleResponse } from "../constants/config";
+
 export interface Room {
     roomID: string;
     hostUsername: string;
@@ -33,6 +35,11 @@ export interface AvatarResponse {
     guestAvatar: string;
     hostUsername: string;
     guestUsername: string;
+}
+
+export interface StartResponse {
+    responseStatus: InfallibleResponse; 
+    firstPlayer: string; 
 }
 
 export interface EndResponse {

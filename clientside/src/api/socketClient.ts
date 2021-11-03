@@ -13,6 +13,7 @@ import {
     GetRoomListResponse,
     JoinRoomResponse,
     ShootResponse,
+    StartResponse,
 } from "./types/transport";
 
 class SocketClient {
@@ -241,6 +242,22 @@ class SocketClient {
         }
     }
 
+    public subscribeStartResponse(callback: (res: StartResponse) => void) {
+        if (!this.socket) return;
+        this.socket.on(
+            SocketEvent.StartResponse,
+            (
+                responseStatus: StartResponse["responseStatus"],
+                firstPlayer: StartResponse["firstPlayer"],
+            ) => {
+                callback({
+                    responseStatus,
+                    firstPlayer, 
+                });
+            }
+        );
+    }
+
     public subscribeEndResponse(callback: (res: EndResponse) => void) {
         if (this.callbackOnEnd) {
             this.callbackOnEnd = callback;
@@ -315,6 +332,6 @@ class SocketClient {
     }
 }
 
-const socketClient = new SocketClient(); // singleton pattern
+const socket = new SocketClient(); // singleton pattern
 
-export default socketClient;
+export default socket;
