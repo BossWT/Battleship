@@ -18,7 +18,6 @@ import {
 
 class SocketClient {
     private socket?: Socket;
-    private callbackOnEnd?: (res: EndResponse) => void;
 
     constructor() {
         this.socket = io(API_URL);
@@ -274,31 +273,24 @@ class SocketClient {
     }
 
     public subscribeEndResponse(callback: (res: EndResponse) => void) {
-        if (this.callbackOnEnd) {
-            this.callbackOnEnd = callback;
-            return;
-        }
-
-        if (this.socket) {
-            this.callbackOnEnd = callback;
-            this.socket.on(
-                SocketEvent.EndResponse,
-                (
-                    responseStatus: EndResponse["responseStatus"],
-                    previousRoundWinner: EndResponse["previousRoundWinner"],
-                    hostScore: EndResponse["hostScore"],
-                    guestScore: EndResponse["guestScore"]
-                ) => {
-                    this.callbackOnEnd &&
-                        this.callbackOnEnd({
-                            responseStatus,
-                            previousRoundWinner,
-                            hostScore,
-                            guestScore,
-                        });
-                }
-            );
-        }
+        if (!this.socket) return;
+        this.socket.on(
+            SocketEvent.EndResponse,
+            (
+                responseStatus: EndResponse["responseStatus"],
+                previousRoundWinner: EndResponse["previousRoundWinner"],
+                hostScore: EndResponse["hostScore"],
+                guestScore: EndResponse["guestScore"]
+            ) => {
+                callback &&
+                    callback({
+                        responseStatus,
+                        previousRoundWinner,
+                        hostScore,
+                        guestScore,
+                    });
+            }
+        );
     }
 
     public subscribeShootResponse(callback: (res: ShootResponse) => void) {
