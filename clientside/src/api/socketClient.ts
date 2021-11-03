@@ -28,9 +28,9 @@ class SocketClient {
         if (this.socket) this.socket.disconnect();
     }
 
-    //////////////////////
-    // Asynchronous API //
-    //////////////////////
+    ////////////////////////////
+    // Asynchronous Setup API //
+    ////////////////////////////
 
     public async getRooms(): Promise<GetRoomListResponse> {
         return new Promise((resolve, reject) => {
@@ -213,6 +213,21 @@ class SocketClient {
         });
     }
 
+    ///////////////////////////
+    // Asynchronous Game API //
+    ///////////////////////////
+
+    public async shoot(pos: string): Promise<ShootResponse> {
+        return new Promise((resolve, reject) => {
+            if (!this.socket) {
+                reject("Socket not initialized.");
+            } else {
+                this.socket.emit(SocketEvent.Shoot, pos);
+                this.subscribeShootResponse(resolve);
+            }
+        });
+    }
+
     public async withdraw(): Promise<EndResponse> {
         return new Promise((resolve, reject) => {
             if (!this.socket) {
@@ -248,11 +263,11 @@ class SocketClient {
             SocketEvent.StartResponse,
             (
                 responseStatus: StartResponse["responseStatus"],
-                firstPlayer: StartResponse["firstPlayer"],
+                firstPlayer: StartResponse["firstPlayer"]
             ) => {
                 callback({
                     responseStatus,
-                    firstPlayer, 
+                    firstPlayer,
                 });
             }
         );
