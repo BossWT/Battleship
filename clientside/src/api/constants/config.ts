@@ -19,6 +19,7 @@ export enum SocketEvent {
     ShootResponse = "shootResponse",
     StartResponse = "gameStartResponse",
     EndResponse = "endResponse",
+    Chat = "chat", 
     Withdraw = "withdraw",
     SocketId = "SocketID",
     Disconnect = "disconnect",

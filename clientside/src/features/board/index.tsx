@@ -57,8 +57,6 @@ const Board: React.FC<Props> = ({
         );
     }, [shipYard, boardType, validate]);
 
-    console.log(board);
-
     const renderedSquares = useMemo(() => {
         return generateArrayOfNumbers(board.gridSize).map((row) =>
             generateArrayOfNumbers(board.gridSize).map((col) => {

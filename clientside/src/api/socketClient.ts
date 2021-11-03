@@ -315,27 +315,35 @@ class SocketClient {
         );
     }
 
-    public subscribeAvatarResponse(callback: (response: AvatarResponse) => void) {
-        if (this.socket) {
-            this.socket.on(
-                SocketEvent.SetAvatarResponse,
-                (
-                    responseStatus: AvatarResponse["responseStatus"],
-                    hostUsername: AvatarResponse["hostUsername"],
-                    hostAvatar: AvatarResponse["hostAvatar"],
-                    guestUsername: AvatarResponse["guestUsername"],
-                    guestAvatar: AvatarResponse["guestAvatar"]
-                ) => {
-                    callback({
-                        responseStatus,
-                        hostAvatar,
-                        guestAvatar,
-                        hostUsername,
-                        guestUsername,
-                    });
-                }
-            );
-        }
+    public subscribeAvatarResponse(callback: (res: AvatarResponse) => void) {
+        if (!this.socket) return;
+        this.socket.on(
+            SocketEvent.SetAvatarResponse,
+            (
+                responseStatus: AvatarResponse["responseStatus"],
+                hostUsername: AvatarResponse["hostUsername"],
+                hostAvatar: AvatarResponse["hostAvatar"],
+                guestUsername: AvatarResponse["guestUsername"],
+                guestAvatar: AvatarResponse["guestAvatar"]
+            ) => {
+                callback({
+                    responseStatus,
+                    hostAvatar,
+                    guestAvatar,
+                    hostUsername,
+                    guestUsername,
+                });
+            }
+        );
+    }
+
+    public subscribeChat(callback: (msg: string) => void) {
+        if (!this.socket) return; 
+        this.socket.on(
+            SocketEvent.Chat, (msg: string) => {
+                callback(msg);
+            }
+        );
     }
 }
 
