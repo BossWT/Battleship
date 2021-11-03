@@ -46,3 +46,16 @@ export interface EndResponse {
     hostScore: number;
     guestScore: number;
 }
+
+export interface ShootResponse {
+    responseStatus:
+        | "Hit"
+        | "Miss"
+        | "Wrong Turn"
+        | "Duplicated Shot"
+        | "Wrong Location";
+    location: string; 
+    currentTurnPlayer: string; 
+    nextTurnPlayer: string; 
+    turnCount: number; 
+}

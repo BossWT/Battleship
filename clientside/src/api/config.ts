@@ -1,7 +1,7 @@
 export const API_URL = "http://localhost:8000";
 
 export enum SocketEvent {
-    CreateRoom = "createRoom",
+    CreateRoom = "createRoom", 
     CreateRoomResponse = "createRoomResponse",
     ChangeLock = "changeLock",
     ChangeLockResponse = "changeLockResponse",
@@ -9,8 +9,6 @@ export enum SocketEvent {
     GetRoomListResponse = "getRoomListResponse",
     JoinRoom = "joinRoom",
     JoinRoomResponse = "joinRoomResponse",
-    SetAvatar = "setAvatar",
-    SetAvatarResponse = "setAvatarResponse",
     RandomShip = "randomShip", 
     RandomShipResponse = "randomShipResponse", 
     Setup = "setup", 
@@ -24,8 +22,8 @@ export enum SocketEvent {
 }
 
 export enum SetupResponseStatus {
-    Completed = "Completed",
-    InvalidPlacement = "Invalid Placement",
+    Completed = "Completed", 
+    InvalidPlacement = "Invalid Placement"
 }
 
-export type InfallibleResponse = "Completed";
+export type InfallibleResponse = 'Completed'; 

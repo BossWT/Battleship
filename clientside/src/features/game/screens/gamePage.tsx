@@ -58,13 +58,13 @@ const GamePage = () => {
             socketClient.joinRoom(username, roomId);
             socketClient.setAvatar(userAvatarSeed);
         }
-        socketClient.subscribeToAvatar(
+        socketClient.subscribeAvatarResponse(
             ({ hostAvatar, guestAvatar, hostUsername, guestUsername }) => {
                 setEnemyAvatarSeed(isHost ? guestAvatar : hostAvatar);
                 setEnemyUsername(isHost ? guestUsername : hostUsername);
             }
         );
-        socketClient.subscribeToEndResponse(forceWithdraw);
+        socketClient.subscribeEndResponse(forceWithdraw);
     }, [
         history,
         isHost,
