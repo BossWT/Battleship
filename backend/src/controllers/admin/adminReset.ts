@@ -40,6 +40,8 @@ export const adminReset = (
 						);
 
 					resetRoom(room);
+					room.hostScore = 0;
+					room.guestScore = 0;
 				});
 
 			// Check Using Room ID
@@ -67,6 +69,8 @@ export const adminReset = (
 					);
 
 				resetRoom(room);
+				room.hostScore = 0;
+				room.guestScore = 0;
 			}
 		}
 		socket.emit('adminResetResponse', 'Completed');

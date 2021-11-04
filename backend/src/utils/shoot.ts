@@ -16,7 +16,9 @@ const checkDestroyed = (
 	if (currentTurn === 'Guest') shipDestroyed = 'Host';
 	else shipDestroyed = 'Guest';
 	for (let i = 0; i < playerShipsCopy.length; i++) {
-		const index = playerShipsCopy[i].findIndex((coordinate) => coordinate === location);
+		const index = playerShipsCopy[i].findIndex(
+			(coordinate) => coordinate === location
+		);
 		if (index !== -1) {
 			playerShipsCopy[i].splice(index, 1);
 			if (playerShipsCopy[i].length === 0) {
@@ -26,7 +28,7 @@ const checkDestroyed = (
 					.emit('shipDestroyed', shipDestroyed, playerShips[i]);
 			}
 		}
-	};
+	}
 };
 export const shoot = (socket: Socket, room: Room, location: string) => {
 	// Get Current Turn Player, Update Turn Number, and Logging
@@ -143,7 +145,7 @@ export const shoot = (socket: Socket, room: Room, location: string) => {
 			room.guestScore
 		);
 
-		stat(socket, room)
+		stat(socket, room);
 		// reset room to setup stage
 		resetRoom(room);
 	}
