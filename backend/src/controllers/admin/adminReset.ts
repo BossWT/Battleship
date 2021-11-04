@@ -46,26 +46,28 @@ export const adminReset = (
 		} else if (filterType === 'room ID') {
 			// Send response to both clients and Reset all values of the room to before set up
 			const room = roomList.find((room) => room.roomID === filter);
-			socket
-				.to(room.hostSocketID)
-				.emit(
-					'endResponse',
-					'Reset by Admin',
-					'None',
-					room.hostScore,
-					room.guestScore
-				);
-			socket
-				.to(room.guestSocketID)
-				.emit(
-					'endResponse',
-					'Reset by Admin',
-					'None',
-					room.hostScore,
-					room.guestScore
-				);
+			if (room) {
+				socket
+					.to(room.hostSocketID)
+					.emit(
+						'endResponse',
+						'Reset by Admin',
+						'None',
+						room.hostScore,
+						room.guestScore
+					);
+				socket
+					.to(room.guestSocketID)
+					.emit(
+						'endResponse',
+						'Reset by Admin',
+						'None',
+						room.hostScore,
+						room.guestScore
+					);
 
-			resetRoom(room);
+				resetRoom(room);
+			}
 		}
 		socket.emit('adminResetResponse', 'Completed');
 	} else {

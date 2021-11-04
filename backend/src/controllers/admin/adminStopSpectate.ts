@@ -11,10 +11,16 @@ export const adminStopSpectate = (
 	// Check privilege
 	if (checkAdmin(socket.id, adminList)) {
 		// Check if the admin is already spectating any game. If yes, unsubscribe admin to the room
-		if (adminList.find((admin) => admin.socketID === socket.id).isSpectating) {
-			roomList.find((room) => room.roomID == roomID).spectator = undefined;
-			socket.emit('adminStopSpectateResponse', 'Completed');
-		} else socket.emit('adminStopSpectateResponse', 'Not Spectating');
+		const admin = adminList.find((admin) => admin.socketID === socket.id)
+		if (admin) {
+			if (admin.isSpectating) {
+				const room = roomList.find((room) => room.roomID == roomID);
+				if (room) {
+					room.spectator = undefined;
+					socket.emit('adminStopSpectateResponse', 'Completed');
+				}
+			} else socket.emit('adminStopSpectateResponse', 'Not Spectating');
+		}
 	} else socket.emit('adminStopSpectateResponse', 'Connection Not Verified');
 	socket.emit('adminStopSpectateResponse', 'Completed');
 };

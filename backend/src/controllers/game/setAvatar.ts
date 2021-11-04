@@ -8,17 +8,26 @@ export const setAvatar = (socket: Socket, roomList: Room[], avatar: string) => {
         (room) =>
             room.hostSocketID === socket.id || room.guestSocketID === socket.id
     );
+    
+    if (room) {
+        if (room.guestSocketID === socket.id) room.guestAvatar = avatar;
+        else if (room.hostSocketID === socket.id) room.hostAvatar = avatar;
 
-    if (room.guestSocketID === socket.id) room.guestAvatar = avatar;
-    else if (room.hostSocketID === socket.id) room.hostAvatar = avatar;
-
-    // Notify Both Players of each other Avatar
-    let hostAvatar = room.hostAvatar ? room.hostAvatar : "Not set";
-    let guestAvatar = room.guestAvatar ? room.guestAvatar : "Not set";
-    const opponentSocketId = findOpponentSocketId(room, socket.id);
-    socket
-        .to(opponentSocketId)
-        .emit(
+        // Notify Both Players of each other Avatar
+        let hostAvatar = room.hostAvatar ? room.hostAvatar : "Not set";
+        let guestAvatar = room.guestAvatar ? room.guestAvatar : "Not set";
+        const opponentSocketId = findOpponentSocketId(room, socket.id);
+        socket
+            .to(opponentSocketId)
+            .emit(
+                "setAvatarResponse",
+                "Completed",
+                room.hostUsername,
+                hostAvatar,
+                room.guestUsername ? room.guestUsername : "Not set",
+                guestAvatar
+            );
+        socket.emit(
             "setAvatarResponse",
             "Completed",
             room.hostUsername,
@@ -26,13 +35,6 @@ export const setAvatar = (socket: Socket, roomList: Room[], avatar: string) => {
             room.guestUsername ? room.guestUsername : "Not set",
             guestAvatar
         );
-    socket.emit(
-        "setAvatarResponse",
-        "Completed",
-        room.hostUsername,
-        hostAvatar,
-        room.guestUsername ? room.guestUsername : "Not set",
-        guestAvatar
-    );
-    console.log(room);
+        console.log(room);
+    }
 };
