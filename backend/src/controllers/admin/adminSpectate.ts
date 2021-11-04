@@ -17,8 +17,10 @@ export const adminSpectate = (
 				socket.emit('adminSpectateResponse', 'Already Spectating');
 			else {
 				const room = roomList.find((room) => room.roomID == roomID);
-				room.spectator = socket.id;
-				admin.isSpectating = true;
+				if (room) {
+					room.spectator = socket.id;
+					admin.isSpectating = true;
+				}
 			}
 		}
 	} else socket.emit('adminSpectateResponse', 'Connection Not Verified');
