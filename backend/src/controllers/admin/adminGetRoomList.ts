@@ -9,10 +9,17 @@ export const adminGetRoomList = (
 ) => {
 	if (checkAdmin(socket.id, adminList)) {
 		const allRoomList: allRoom[] = [];
-		roomList
-			.forEach((room) =>
-				allRoomList.push(new allRoom(room.hostUsername, room.guestUsername, room.roomID))
-			);
+		roomList.forEach((room) =>
+			allRoomList.push(
+				new allRoom(
+					room.hostUsername,
+					room.hostAvatar,
+					room.guestUsername,
+					room.guestAvatar,
+					room.roomID
+				)
+			)
+		);
 		socket.emit('adminGetRoomListResponse', 'Completed', allRoomList);
 	} else socket.emit('adminGetRoomListResponse', 'Connection Not Verified', '');
 };
