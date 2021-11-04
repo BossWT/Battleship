@@ -43,7 +43,7 @@ export const randomShip = (numOfShips: number, shipLength: number) => {
 
 	let locationAvaliable = false;
 	while (!locationAvaliable || ships.length < numOfShips) {
-		if (loopIterator > 1000) {
+		if (loopIterator > numOfShips ** 2) {
 			ships = [
 				['A1', 'A2', 'A3', 'A4'],
 				['C2', 'D2', 'E2', 'F2'],
@@ -153,6 +153,7 @@ export const randomShip = (numOfShips: number, shipLength: number) => {
 			}
 			ships.push(shipLocation);
 		}
+		console.log(loopIterator);
 		loopIterator += 1;
 	}
 	if (isInfiniteLoop) console.log('Infinite Loop');
