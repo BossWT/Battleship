@@ -18,5 +18,7 @@ export const resetRoom = (room: Room) => {
 	room.hostShot = [];
 	room.guestShot = [];
 	room.turnCount = 0;
+	room.hostScore = 0;
+	room.guestScore = 0;
 	if (room.timer) clearTimeout(room.timer);
 };
