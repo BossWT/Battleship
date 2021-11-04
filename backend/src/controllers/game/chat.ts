@@ -7,6 +7,8 @@ export const chat = (socket: Socket, msg: string, roomList: Room[]) => {
 		(room) =>
 			room.hostSocketID === socket.id || room.guestSocketID === socket.id
 	);
-	const opponentSocketId = findOpponentSocketId(room, socket.id);
-	socket.to(opponentSocketId).emit('chat', msg);
+	if (room) {
+		const opponentSocketId = findOpponentSocketId(room, socket.id);
+		socket.to(opponentSocketId).emit('chat', msg);
+	}
 };

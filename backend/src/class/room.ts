@@ -78,11 +78,21 @@ export class openRoom {
 
 export class allRoom {
 	private hostUsername: string;
+	private hostAvatar: string;
 	private guestUsername: string;
+	private guestAvatar: string;
 	private roomID: string;
-	constructor(hostUsername: string, guestUsername: string, roomID: string) {
+	constructor(
+		hostUsername: string,
+		hostAvatar: string,
+		guestUsername: string,
+		guestAvatar: string,
+		roomID: string
+	) {
 		this.hostUsername = hostUsername;
-		this.guestUsername = guestUsername ? guestUsername : "-"
+		this.hostAvatar = hostAvatar;
+		this.guestUsername = guestUsername;
+		this.guestAvatar = guestAvatar;
 		this.roomID = roomID;
 	}
 }

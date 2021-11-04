@@ -15,11 +15,14 @@ export const createRoom = (
 	roomList.push(
 		new Room(username, socket.id, address, roomIterator)
 	);
-	console.log(roomList.find((room) => room.hostSocketID === socket.id));
-	console.log(roomList.find((room) => room.hostSocketID === socket.id).roomID);
-	socket.emit(
-		'createRoomResponse',
-		'Completed',
-		roomList.find((room) => room.hostSocketID === socket.id).roomID
-	);
+	const room = roomList.find((room) => room.hostSocketID === socket.id);
+	if (room) {
+		console.log(room);
+		console.log(room.roomID);
+		socket.emit(
+			'createRoomResponse',
+			'Completed',
+			room.roomID
+		);
+	}
 };
