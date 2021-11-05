@@ -28,6 +28,18 @@ const theme = {
         danger: {
             main: "#FF9A61",
         },
+        tutorial: {
+            modal: {
+                background: {
+                    primary: "#674def",
+                    light: "#FFFFFF",
+                },
+            },
+            infoButton: {
+                background: "#FFFFFF",
+                text: "#917DF8",
+            },
+        },
         lobby: {
             avatar: {
                 background: {
@@ -54,12 +66,14 @@ const theme = {
                     primary: "#6D51FD",
                     secondary: "#F0EDFF",
                     room: "#FFFFFF",
+                    startGame: "#FFFFFF",
                 },
                 text: {
                     primary: "#FFFFFF",
                     secondary: "#6D51FD",
                     room: "#8A77EF",
                     roomDark: "#1C0B76",
+                    startGame: "#674def",
                 },
             },
             slider: {

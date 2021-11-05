@@ -1,8 +1,8 @@
-import { FC, MouseEvent, useState, useEffect } from "react";
+import { FC, MouseEvent, useState, useEffect, useMemo, useCallback } from "react";
 import { Position, Side } from "../board/types/utility";
 import { PlacementList, PlacementStatus } from "./types/placement";
 import { INIT_PLACEMENT_LIST } from "./constants/list";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Board from "../board";
 import Ship from "./components/ship";
 import Refresh from "./components/refresh";
@@ -16,13 +16,35 @@ import {
     BattleshipDirection,
     BattleshipStatus,
 } from "../board/types/battleship";
+import getAvailableSquares from "../board/functions/getAvailableSquares";
+import Left from "../game/components/left";
 
 interface Props {
-    onSubmit: (shipyard: BattleshipAllyYard) => void; 
+    onSubmit: (shipyard: BattleshipAllyYard) => void;
 }
 
 const SetupModal: FC<Props> = ({ onSubmit }) => {
     const [placements, setPlacements] = useState(INIT_PLACEMENT_LIST);
+    const [direction, setDirection] = useState(BattleshipDirection.Vertical);
+    const [waiting, setWaiting] = useState(false);
+
+    const shipyard = placements
+        .filter(
+            (p) =>
+                p.battleship.status === BattleshipStatus.Default ||
+                p.battleship.status === BattleshipStatus.Placeholder
+        )
+        .map((p) => p.battleship) as BattleshipAllyYard;
+
+    const availableSquares = useMemo(() => {
+        const selected = placements.find((p) => p.selected);
+        if (!selected) return undefined;
+        return getAvailableSquares(
+            selected.battleship.length,
+            direction,
+            shipyard.filter((s) => s.status !== BattleshipStatus.Placeholder)
+        );
+    }, [placements, shipyard, direction]);
 
     const onShipClick = (battleship: BattleshipBase, _e: MouseEvent) => {
         const index = placements.findIndex((p) => p.battleship === battleship);
@@ -42,17 +64,12 @@ const SetupModal: FC<Props> = ({ onSubmit }) => {
         const nextPlacements: PlacementList = placements.map((p, i) => {
             if (i !== index) return p;
 
-            const direction =
-                p.status === PlacementStatus.Placing
-                    ? p.battleship.direction
-                    : BattleshipDirection.Vertical;
-
             return {
                 battleship: {
                     ...p.battleship,
                     position,
                     direction,
-                    status: BattleshipStatus.Default,
+                    status: BattleshipStatus.Placeholder,
                 },
                 selected: p.selected,
                 status: PlacementStatus.Placing,
@@ -132,8 +149,9 @@ const SetupModal: FC<Props> = ({ onSubmit }) => {
 
         if (hostReady && guestReady) return onSubmit(shipyard);
 
-        await socketClient.waitReady(); 
-        return onSubmit(shipyard); 
+        setWaiting(true);
+        await socketClient.waitReady();
+        return onSubmit(shipyard);
     };
 
     const renderedShip = placements.map((p) => (
@@ -146,37 +164,38 @@ const SetupModal: FC<Props> = ({ onSubmit }) => {
         />
     ));
 
-    const renderedShipyard = placements
-        .filter((p) => p.battleship.status === BattleshipStatus.Default)
-        .map((p) => p.battleship) as BattleshipAllyYard;
+    const onRotate = useCallback(() => {
+        const index = placements.findIndex((p) => p.selected);
+        setDirection((direction + 1) % 4);
+
+        if (index === -1) return;
+
+        const nextPlacements: PlacementList = placements.map((p, i) => {
+            if (i !== index || p.status === PlacementStatus.Undecided)
+                return p;
+            return {
+                battleship: {
+                    ...p.battleship,
+                    direction: (p.battleship.direction + 1) % 4,
+                },
+                selected: p.selected,
+                status: PlacementStatus.Placing,
+            };
+        });
+
+        setPlacements(nextPlacements);
+    }, [placements, direction]);
 
     useEffect(() => {
         const fn = (e: KeyboardEvent) => {
             if (e.code === "Space") {
-                const index = placements.findIndex((p) => p.selected);
-
-                if (index === -1) return;
-
-                const nextPlacements: PlacementList = placements.map((p, i) => {
-                    if (i !== index || p.status === PlacementStatus.Undecided)
-                        return p;
-                    return {
-                        battleship: {
-                            ...p.battleship,
-                            direction: (p.battleship.direction + 1) % 4,
-                        },
-                        selected: p.selected,
-                        status: PlacementStatus.Placing,
-                    };
-                });
-
-                setPlacements(nextPlacements);
+                onRotate();
             }
         };
 
         document.addEventListener("keypress", fn);
         return () => document.removeEventListener("keypress", fn);
-    }, [placements]);
+    }, [placements, direction, onRotate]);
 
     return (
         <Wrapper>
@@ -198,16 +217,20 @@ const SetupModal: FC<Props> = ({ onSubmit }) => {
                         validate={false}
                         selectable={false}
                         boardType={Side.Ally}
-                        shipYard={renderedShipyard}
+                        shipYard={shipyard}
+                        availability={availableSquares}
                         onSquareHoverStart={onSquareHoverStart}
                         onSquareHoverEnd={onSquareHoverEnd}
                         onSquareClick={onSquareClick}
                     ></Board>
-                    <ResetButton onClick={onReset}>Reset</ResetButton>
+                    <MoreAction>
+                        <RotateButton direction={direction} onClick={onRotate}><Left size="1.5rem" color="white"/></RotateButton>
+                        <ResetButton onClick={onReset}>Reset</ResetButton>
+                    </MoreAction>
                 </BoardWrapper>
             </BodyWrapper>
             <Spacer />
-            <ReadyButton onClick={onReady}>Ready!</ReadyButton>
+            <ReadyButton onClick={onReady}>{waiting ? "Waiting for another player..." : "Ready!"}</ReadyButton>
         </Wrapper>
     );
 };
@@ -225,10 +248,11 @@ const Wrapper = styled.div`
     height: auto;
     position: absolute;
     background: #674def;
+    z-index: 99;
 `;
 
 const HeaderWrapper = styled.div`
-    border-radius: 12px;
+    border-radius: 0.75rem;
     display: flex;
     background: #7b61ff;
     flex-flow: row;
@@ -241,6 +265,16 @@ const HeaderText = styled.div`
     font-size: 1rem;
     font-weight: 600;
     color: white;
+`;
+
+const MoreAction = styled.div`
+    display: flex; 
+    flex-flow: row; 
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1rem;
 `;
 
 const RandomButton = styled.button`
@@ -259,6 +293,7 @@ const RandomButton = styled.button`
     color: white;
     cursor: pointer;
     font-weight: 600;
+    width: auto;
 
     &:hover {
         transform: scaleX(1.04) scaleY(1.08);
@@ -268,6 +303,7 @@ const RandomButton = styled.button`
         transform: scaleX(0.96) scaleY(0.92);
     }
 `;
+
 
 const BodyWrapper = styled.div`
     display: flex;
@@ -339,9 +375,8 @@ const ResetButton = styled.button`
     color: white;
     cursor: pointer;
     font-weight: 500;
-    width: 100%;
-    position: absolute;
     bottom: 0;
+    flex-grow: 1; 
 
     &:hover {
         transform: scaleX(1.04) scaleY(1.08);
@@ -349,5 +384,35 @@ const ResetButton = styled.button`
 
     &:active {
         transform: scaleX(0.96) scaleY(0.92);
+    }
+`;
+
+const RotateButton = styled(ResetButton)<{ direction: BattleshipDirection }>`
+    padding: 0.5rem;
+    flex-grow: 0;
+
+    & > svg {
+        transition: transform 200ms ease; 
+
+        ${({ direction }) => {
+            switch (direction) {
+                case BattleshipDirection.Horizontal:
+                    return css`
+                        transform: rotate(0deg);
+                    `;
+                case BattleshipDirection.Vertical:
+                    return css`
+                        transform: rotate(90deg);
+                    `;
+                case BattleshipDirection.HorizontalRev:
+                    return css`
+                        transform: rotate(180deg);
+                    `;
+                case BattleshipDirection.VerticalRev:
+                    return css`
+                        transform: rotate(270deg);
+                    `;
+            }
+        }}
     }
 `;

@@ -1,6 +1,6 @@
 export const API_URL =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:8000"
+        ? "https://game.motorhub-th.com"
         : process.env.REACT_APP_API_URL;
 
 export enum SocketEvent {
@@ -29,6 +29,14 @@ export enum SocketEvent {
     Withdraw = "withdraw",
     SocketId = "SocketID",
     Disconnect = "disconnect",
+    AdminLogin = "adminLogin",
+    AdminLoginResponse = "adminLoginResponse",
+    AdminGetRoomList = "adminGetRoomList",
+    AdminGetRoomListResponse = "adminGetRoomListResponse",
+    AdminSpectate = "adminSpectate",
+    AdminSpectateResponse = "adminSpectateResponse",
+    AdminStopSpectate = "adminStopSpectate",
+    AdminStopSpectateResponse = "adminStopSpectateResponse",
 }
 
 export enum SetupResponseStatus {

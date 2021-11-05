@@ -7,10 +7,17 @@ import GlobalStyles from "./styles/globalStyles";
 import { theme } from "./styles/theme";
 
 const App = () => {
-    const [username, setUsername] = useState<string>("");
+    const [username, setUsername] = useState<string>(
+        localStorage.getItem("username") || ""
+    );
     const [userAvatarSeed, setUserAvatarSeed] = useState<string>(
         localStorage.getItem("userAvatarSeed") || "nnaries"
     );
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+    useEffect(() => {
+        localStorage.setItem("username", username);
+    }, [username]);
 
     useEffect(() => {
         return () => {
@@ -20,7 +27,14 @@ const App = () => {
 
     return (
         <UserContext.Provider
-            value={{ username, userAvatarSeed, setUsername, setUserAvatarSeed }}
+            value={{
+                username,
+                userAvatarSeed,
+                isAdmin,
+                setUsername,
+                setUserAvatarSeed,
+                setIsAdmin,
+            }}
         >
             <ThemeProvider theme={theme}>
                 <GlobalStyles theme={theme} />
