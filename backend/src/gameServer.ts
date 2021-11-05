@@ -65,7 +65,7 @@ export class GameServer {
 		});
 
 		this._app.get('/', (req, res) => {
-			res.send('Hello World!!');
+			res.send('Hello World!');
 		});
 
 		this.io.on('connection', (socket: Socket) => {
