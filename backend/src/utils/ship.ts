@@ -33,7 +33,6 @@ export const randomShip = (numOfShips: number, shipLength: number) => {
 	let ships: string[][] = [];
 	const board: Board = {};
 	let loopIterator = 0;
-	let isInfiniteLoop = false;
 
 	validColumns.forEach((column) => {
 		validRows.forEach((row) => {
@@ -50,13 +49,12 @@ export const randomShip = (numOfShips: number, shipLength: number) => {
 				['H1', 'H2', 'H3', 'H4'],
 				['C4', 'C5', 'C6', 'C7']
 			];
-			isInfiniteLoop = true;
 			break;
 		}
+		loopIterator += 1;
 		const startLocation = randomLocation(board);
 		const column = startLocation[0];
 		const row = startLocation.substring(1);
-
 		const direction = directions[Math.floor(Math.random() * directions.length)];
 		let lastLocation;
 		if (direction === 'horizontal') {
@@ -153,11 +151,7 @@ export const randomShip = (numOfShips: number, shipLength: number) => {
 			}
 			ships.push(shipLocation);
 		}
-		console.log(loopIterator);
-		loopIterator += 1;
 	}
-	if (isInfiniteLoop) console.log('Infinite Loop');
 	console.log(ships);
-	console.log(loopIterator);
 	return ships;
 };
