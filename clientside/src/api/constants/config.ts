@@ -1,7 +1,4 @@
-export const API_URL =
-    process.env.NODE_ENV === "development"
-        ? "https://game.motorhub-th.com"
-        : process.env.REACT_APP_API_URL;
+export const API_URL = "https://netcentric-battleship-api.herokuapp.com/";
 
 export enum SocketEvent {
     CreateRoom = "createRoom",
